@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OPay Home</title>
+<style>
+:root{
+  --green:#1dc573;--green-d:#0fa85f;--ink:#1a1a1a;--mute:#8a8f98;--bg:#f4f5f7;--card:#fff;
+  --tint:#e6f7ee;--page:#d9dde2;--nav:#fff;--line:#ececec;--red:#ef4444;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--ink:#f2f3f5;--mute:#9aa0a8;--bg:#121415;--card:#1c1f21;--tint:#16352a;--page:#050606;--nav:#1c1f21;--line:#2a2d30}
+}
+:root[data-theme="dark"]{--ink:#f2f3f5;--mute:#9aa0a8;--bg:#121415;--card:#1c1f21;--tint:#16352a;--page:#050606;--nav:#1c1f21;--line:#2a2d30}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--page);font-family:"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);display:flex;justify-content:center;align-items:center}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.phone{position:relative;width:100%;max-width:390px;height:100%;max-height:844px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+@media (min-width:480px){.phone{border-radius:34px;box-shadow:0 20px 60px rgba(0,0,0,.25);height:min(844px,96vh)}}
+.scroll{flex:1;overflow-y:auto;padding:0 14px 16px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 4px 12px}
+.who{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600}
+.avatar{position:relative;width:30px;height:30px}
+.avatar .dot{position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;border-radius:50%;background:#f59e0b;color:#fff;font-size:8px;display:grid;place-items:center;border:1.5px solid var(--bg)}
+.icons{display:flex;gap:18px;align-items:center}
+.ic{position:relative;width:24px;height:24px;display:grid;place-items:center}
+.ic svg{width:24px;height:24px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tag{position:absolute;top:-9px;right:-12px;background:#f9a8d4;color:#a21caf;font-size:7px;font-weight:700;padding:1px 4px;border-radius:6px 6px 6px 0}
+.badge{position:absolute;top:-6px;right:-6px;min-width:15px;height:15px;border-radius:8px;background:var(--red);color:#fff;font-size:9px;display:grid;place-items:center;padding:0 3px}
+
+/* balance */
+.balance{background:linear-gradient(135deg,#22c97a,#12b866);color:#fff;border-radius:14px;padding:14px 14px 16px;box-shadow:0 6px 16px rgba(29,197,115,.28)}
+.brow{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.brow .l{display:flex;align-items:center;gap:6px;opacity:.95}
+.brow svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.amt{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.amt .n{font-size:26px;font-weight:700;letter-spacing:.2px;display:flex;align-items:center;gap:4px}
+.amt .n small{font-size:18px;opacity:.8;font-weight:500}
+.add{background:#fff;color:var(--green-d);font-weight:700;font-size:14px;padding:9px 14px;border-radius:20px}
+
+.card{background:var(--card);border-radius:14px;margin-top:12px}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);padding:14px 6px}
+.quick button,.grid button{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:500}
+.sq{width:38px;height:38px;border-radius:10px;background:var(--tint);display:grid;place-items:center}
+.sq svg{width:22px;height:22px;stroke:var(--green-d);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* promo */
+.promo{display:flex;align-items:center;gap:12px;padding:16px 14px 12px;position:relative;overflow:hidden}
+.promo .sl{display:flex;gap:12px;align-items:center;min-width:100%;transition:opacity .25s}
+.promo h4{font-size:15px;font-weight:700}
+.promo p{font-size:13px;color:var(--mute);margin-top:4px}
+.mail{width:38px;height:34px;flex:none}
+.dots{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);display:flex;gap:3px}
+.dots i{width:10px;height:2px;background:#d1d5db;border-radius:2px;transition:.2s}
+.dots i.on{background:#6b7280}
+.promo{padding-bottom:18px}
+
+/* services */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);row-gap:16px;padding:16px 4px 14px}
+.svc{position:relative}
+.svc .sq{background:transparent;width:38px;height:38px}
+.svc .sq svg{width:34px;height:34px}
+.pill{position:absolute;top:-8px;right:4px;background:#fecdd3;color:#e11d48;font-size:8px;font-weight:700;padding:1px 5px;border-radius:6px 6px 6px 0;white-space:nowrap}
+
+/* welcome */
+.welcome{background:linear-gradient(180deg,var(--tint),var(--card) 80%);padding:14px;position:relative;overflow:hidden}
+.welcome h5{font-size:14px;font-weight:600;margin-bottom:12px}
+.welcome .cp{position:absolute;right:14px;top:14px;width:16px;height:16px;border-radius:4px;background:#c4b5fd}
+.vou{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;padding:10px}
+.vou .ph{width:34px;height:42px;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;flex:none}
+.vou .ph b{width:16px;height:12px;border-radius:3px;background:var(--green)}
+.vou h6{font-size:15px;font-weight:700}
+.vou p{font-size:11.5px;color:var(--mute);margin-top:2px}
+.go{margin-left:auto;background:var(--green);color:#fff;font-weight:700;border-radius:20px;padding:8px 26px;font-size:15px}
+.go[disabled]{background:#9ca3af}
+.next{padding:20px 16px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px}
+.next i{width:30px;height:30px;border-radius:50%;background:var(--ink);display:block}
+
+/* floating tab */
+.float{position:absolute;right:0;bottom:92px;background:var(--green);color:#fff;font-size:11px;font-weight:600;padding:8px 10px 8px 16px;border-radius:16px 0 0 16px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+
+/* nav */
+nav{display:grid;grid-template-columns:repeat(5,1fr);background:var(--nav);border-top:1px solid var(--line);padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--mute)}
+nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--green);font-weight:700}
+nav button.on svg{fill:var(--green);stroke:var(--green)}
+
+.toast{position:absolute;left:50%;bottom:90px;transform:translate(-50%,20px);background:rgba(20,20,20,.9);color:#fff;font-size:13px;padding:10px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:.25s;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:8px}
+#nameBtn{font-size:15px;font-weight:600}#nameBtn i{font-style:normal;font-size:12px;color:var(--mute)}
+.page{position:absolute;inset:0;z-index:6;background:var(--bg);display:none;flex-direction:column}
+.page.on{display:flex}
+.ph-h{display:flex;align-items:center;gap:10px;padding:16px 14px;background:var(--card);font-weight:700;font-size:17px}
+.ph-h button{width:28px;height:28px;display:grid;place-items:center}
+.ph-h svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pb,.tabv{flex:1;overflow:auto;padding:14px;scrollbar-width:none}
+.tabv{display:none}
+.row{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);font-size:14px;width:100%;text-align:left}
+.card .row:last-child{border:0}
+.row span:nth-child(2){flex:1}.row small{display:block;color:var(--mute);font-size:12px;margin-top:2px;font-weight:400}
+.em{width:36px;height:36px;border-radius:10px;background:var(--tint);display:grid;place-items:center;font-size:18px}
+.ch{color:var(--mute);font-size:20px}
+.fld{margin-top:12px}.fld label{font-size:12px;color:var(--mute)}
+.fld input,.fld select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;margin-top:6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{padding:8px 14px;border-radius:18px;background:var(--card);border:1px solid var(--line);font-size:13px}
+.chip.on{border-color:var(--green);color:var(--green-d);background:var(--tint)}
+.btn{width:100%;background:var(--green);color:#fff;font-weight:700;padding:14px;border-radius:26px;margin-top:18px;font-size:15px}
+.hero{background:linear-gradient(135deg,#22c97a,#12b866);color:#fff;border-radius:14px;padding:18px}
+.hero small{opacity:.85}.hero b{display:block;font-size:26px;margin-top:6px}
+.pad{padding:16px}.note{font-size:12px;color:var(--mute);margin-top:10px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
+.day{aspect-ratio:1;border-radius:10px;background:var(--card);display:grid;place-items:center;font-size:12px}
+.day.ok{background:var(--green);color:#fff}
+.empty{text-align:center;color:var(--mute);padding:50px 0;font-size:14px}
+.scan{height:280px;border-radius:16px;background:#111;position:relative;display:grid;place-items:center;color:#ddd;font-size:13px}
+.scan i{position:absolute;width:150px;height:150px;border:3px solid var(--green);border-radius:16px}
+.vcard{background:linear-gradient(135deg,#0fa85f,#1dc573 60%,#7be0ae);color:#fff;border-radius:16px;padding:18px;height:180px;display:flex;flex-direction:column;justify-content:space-between}
+.sheet-bg{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.45);display:none;align-items:flex-end}
+.sheet-bg.on{display:flex}.sheet{background:var(--card);width:100%;padding:18px;border-radius:20px 20px 0 0}
+.sheet h4{font-size:16px}.two{display:flex;gap:10px}.two .btn{margin-top:14px}.two .btn.g{background:var(--line);color:var(--ink)}
+.toast{z-index:30}.mg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 4px;text-align:center;font-size:12px}
+.mg button{display:flex;flex-direction:column;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <div class="top">
+      <div class="who">
+        <div class="avatar">
+          <svg viewBox="0 0 30 30" width="30" height="30"><circle cx="15" cy="15" r="11" fill="none" stroke="#1dc573" stroke-width="5"/><circle cx="20" cy="9" r="3.5" fill="#6366f1"/></svg>
+          <span class="dot">1</span>
+        </div>
+        <button id="nameBtn" aria-label="Change name">Hi, <span id="nameTxt">ROSELINE</span> <i>✎</i></button>
+      </div>
+      <div class="icons">
+        <button class="ic" data-go="support" aria-label="Help"><svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/><path d="M19 20c0 1.5-2 2-5 2"/></svg><span class="tag">HELP</span></button>
+        <button class="ic" data-go="scan" aria-label="Scan"><svg viewBox="0 0 24 24"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M3 12h18"/></svg></button>
+        <button class="ic" id="bell" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/></svg><span class="badge" id="badge">2</span></button>
+      </div>
+    </div>
+
+    <section class="balance">
+      <div class="brow">
+        <div class="l">
+          <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="#fff" stroke="#fff"/><path d="M8.5 12l2.5 2.5 4.5-5" stroke="#12b866"/></svg>
+          <span>Available Balance</span>
+          <button id="eye" aria-label="Toggle balance"><svg viewBox="0 0 24 24" id="eyeSvg"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+        <button data-go="history" style="font-size:13px">Transaction History &rsaquo;</button>
+      </div>
+      <div class="amt">
+        <button class="n" id="bal" data-toast="Balance details"><span id="balTxt"><small>₦</small>0.00</span><small>&rsaquo;</small></button>
+        <button class="add" id="add">+ Add Money</button>
+      </div>
+    </section>
+
+    <section class="card quick">
+      <button data-go="toopay"><span class="sq"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="10" r="2.5"/><path d="M8 17c1-2 2.2-3 4-3s3 1 4 3"/></svg></span>To OPay</button>
+      <button data-go="tobank"><span class="sq"><svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5zM5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg></span>To Bank</button>
+      <button data-go="withdraw"><span class="sq"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 15l6-6M10 9h5v5"/></svg></span>Withdraw</button>
+    </section>
+
+    <section class="card promo" id="promo">
+      <div class="sl" id="slide">
+        <svg class="mail" viewBox="0 0 38 34"><rect x="2" y="10" width="30" height="20" rx="3" fill="#3b82f6"/><path d="M2 12l15 10 15-10" fill="none" stroke="#fff" stroke-width="2"/><path d="M24 4l12 5-4 6z" fill="#f59e0b"/></svg>
+        <div><h4 id="pt">Take Control, Stay Informed</h4><p id="pp">Add your email, get the latest from OPay</p></div>
+      </div>
+      <div class="dots" id="dots"><i class="on"></i><i></i><i></i></div>
+    </section>
+
+    <section class="card grid">
+      <button class="svc" data-go="airtime"><span class="pill">Up to 6%</span><span class="sq"><svg viewBox="0 0 24 24" style="stroke:none"><rect x="6" y="2" width="12" height="20" rx="2.5" fill="#1dc573"/><rect x="8" y="5" width="8" height="12" rx="1" fill="#fff"/><path d="M10 11h4M12 9v4" stroke="#1dc573" stroke-width="1.6"/></svg></span>Airtime</button>
+      <button class="svc" data-go="data"><span class="pill">Up to 6%</span><span class="sq"><svg viewBox="0 0 24 24" style="stroke:none"><rect x="6" y="2" width="12" height="20" rx="2.5" fill="#1dc573"/><rect x="8" y="5" width="8" height="12" rx="1" fill="#fff"/><path d="M10 9v6m0 0l-1.5-1.5M10 15l1.5-1.5M14 15V9m0 0l-1.5 1.5M14 9l1.5 1.5" stroke="#1dc573" stroke-width="1.3" fill="none"/></svg></span>Data</button>
+      <button class="svc" data-go="betting"><span class="sq"><svg viewBox="0 0 24 24" style="stroke:none"><circle cx="12" cy="12" r="10" fill="#1dc573"/><circle cx="12" cy="12" r="4.5" fill="#fff"/><circle cx="12" cy="12" r="1.8" fill="#1dc573"/></svg></span>Betting</button>
+      <button class="svc" data-go="tv"><span class="sq"><svg viewBox="0 0 24 24" style="stroke:none"><rect x="2" y="5" width="20" height="14" rx="3" fill="#1dc573"/><path d="M10 9.5v5l4.5-2.5z" fill="#fff"/></svg></span>TV</button>
+      <button class="svc" data-go="owealth"><span class="sq"><svg viewBox="0 0 24 24" style="stroke:none"><ellipse cx="12" cy="14" rx="9" ry="7" fill="#1dc573"/><circle cx="12" cy="7" r="4" fill="#fcd34d"/><circle cx="16" cy="13" r="1" fill="#fff"/></svg></span>OWealth</button>
+      <button class="svc" data-go="loan"><span class="sq"><svg viewBox="0 0 24 24" style="stroke:none"><path d="M12 22c-7-4-9-9-9-13l9-6 9 6c0 4-2 9-9 13z" fill="#1dc573"/><circle cx="12" cy="11" r="5" fill="#fff"/><text x="12" y="14" text-anchor="middle" font-size="8" font-weight="700" fill="#1dc573">N</text></svg></span>Loan</button>
+      <button class="svc" data-go="checkin"><span class="sq"><svg viewBox="0 0 24 24" style="stroke:none"><rect x="3" y="4" width="18" height="17" rx="3" fill="#1dc573"/><rect x="3" y="4" width="18" height="5" rx="2" fill="#0fa85f"/><path d="M8 14l3 3 5-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Check-In</button>
+      <button class="svc" data-go="more"><span class="sq"><svg viewBox="0 0 24 24" style="stroke:none"><path d="M12 2l10 5-10 5L2 7z" fill="#0fa85f"/><path d="M6 11v5c0 2 3 3 6 3s6-1 6-3v-5l-6 3z" fill="#1dc573"/><circle cx="12" cy="20" r="2" fill="#fcd34d"/></svg></span>More</button>
+    </section>
+
+    <section class="card welcome">
+      <h5>Welcome bonus just for you!</h5><span class="cp"></span>
+      <div class="vou">
+        <span class="ph"><b></b></span>
+        <div><h6>Airtime&amp;Data Voucher</h6><p>Get ₦100 airtime&amp;₦100 data for free</p></div>
+        <button class="go" id="go">GO</button>
+      </div>
+      <div class="vou"><span class="ph" style="border:0;background:var(--tint);border-radius:10px;font-size:20px;width:40px;height:42px">🎁</span><div><h6>Cashback Voucher</h6><p>Get ₦200 cashback on your first bill payment</p></div><button class="go" data-vou="v1" data-msg="₦200 cashback voucher claimed">GO</button></div>
+      <div class="vou"><span class="ph" style="border:0;background:var(--tint);border-radius:10px;font-size:20px;width:40px;height:42px">💸</span><div><h6>Free Transfer Voucher</h6><p>5 free transfers to any bank account</p></div><button class="go" data-vou="v2" data-msg="5 free transfers added">GO</button></div>
+      <div class="vou"><span class="ph" style="border:0;background:var(--tint);border-radius:10px;font-size:20px;width:40px;height:42px">⚽</span><div><h6>Betting Bonus</h6><p>Get ₦150 bonus when you fund your betting wallet</p></div><button class="go" data-vou="v3" data-msg="₦150 betting bonus claimed">GO</button></div>
+      <div class="vou"><span class="ph" style="border:0;background:var(--tint);border-radius:10px;font-size:20px;width:40px;height:42px">📺</span><div><h6>TV Subscription Coupon</h6><p>₦300 off your next DStv or GOtv plan</p></div><button class="go" data-vou="v4" data-msg="₦300 TV coupon claimed">GO</button></div>
+      <div class="vou"><span class="ph" style="border:0;background:var(--tint);border-radius:10px;font-size:20px;width:40px;height:42px">💡</span><div><h6>Electricity Discount</h6><p>5% off your next electricity token purchase</p></div><button class="go" data-vou="v5" data-msg="5% electricity discount claimed">GO</button></div>
+    </section>
+
+    <section class="card next"><i></i><span>Partner: Next big win is on you!</span></section>
+  </div>
+
+  <button class="float" data-toast="Offer details">Click for…</button>
+
+  <div class="tabv" id="tabv"></div>
+<nav>
+    <button class="on" data-tab="Home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+    <button data-tab="Rewards"><svg viewBox="0 0 24 24"><path d="M12 3l3 6 6 .8-4.5 4.2 1.2 6L12 17l-5.7 3 1.2-6L3 9.800 9 9z"/></svg>Rewards</button>
+    <button data-tab="Finance"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 15l4-4 3 3 3-5"/></svg>Finance</button>
+    <button data-tab="Cards"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>Cards</button>
+    <button data-tab="Me"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.500 13.500s1.500 2 3.500 2 3.500-2 3.500-2"/></svg>Me</button>
+  </nav>
+  <div class="page" id="page"></div>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s), toast=$('#toast');
+let tt;
+function show(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),1500)}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-toast]');
+  if(b) show(b.dataset.toast);
+});
+
+// balance visibility
+let hidden=false;
+const eyeOpen='<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>';
+const eyeOff='<path d="M3 3l18 18M10.600 5.100A9.700 9.700 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3.200 4M6.600 6.600C3.700 8.500 2 12 2 12s4 7 10 7c1.600 0 3-.4 4.300-1M9.900 9.900a3 3 0 0 0 4.200 4.200"/>';
+$('#eye').onclick=()=>{
+  hidden=!hidden;
+  $('#balTxt').innerHTML=hidden?'****':'<small>₦</small>0.00';
+  $('#eyeSvg').innerHTML=hidden?eyeOff:eyeOpen;
+};
+
+// add money
+$('#add').onclick=()=>show('Choose a funding method');
+
+// notifications
+$('#bell').onclick=()=>{const b=$('#badge');if(b.style.display!=='none'){b.style.display='none';show('2 notifications marked as read')}else show('No new notifications')};
+
+// promo carousel
+const slides=[
+  ['Take Control, Stay Informed','Add your email, get the latest from OPay'],
+  ['Secure your account','Set a transaction PIN in one minute'],
+  ['Invite friends, earn more','Share your code and get a reward']
+];
+let si=0;const dots=[...document.querySelectorAll('#dots i')];
+function setSlide(i){
+  si=(i+slides.length)%slides.length;
+  const s=$('#slide');s.style.opacity=0;
+  setTimeout(()=>{$('#pt').textContent=slides[si][0];$('#pp').textContent=slides[si][1];s.style.opacity=1},180);
+  dots.forEach((d,k)=>d.classList.toggle('on',k===si));
+}
+let auto=setInterval(()=>setSlide(si+1),4000);
+let x0=null;const pr=$('#promo');
+pr.addEventListener('pointerdown',e=>x0=e.clientX);
+pr.addEventListener('pointerup',e=>{
+  if(x0===null)return;const dx=e.clientX-x0;x0=null;
+  if(Math.abs(dx)>30){clearInterval(auto);setSlide(si+(dx<0?1:-1))}
+  else show('Add your email');
+});
+
+// voucher
+$('#go').onclick=e=>{const g=e.currentTarget;g.textContent='Claimed';g.disabled=true;show('₦100 airtime & ₦100 data added')};
+
+// bottom nav
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(n=>n.classList.remove('on'));
+  b.classList.add('on');
+  if(b.dataset.tab!=='Home')show(b.dataset.tab+' (demo screen not built)');
+});
+</script>
+<script>
+(()=>{
+const ph=document.querySelector('.phone'),pg=document.getElementById('page'),tv=document.getElementById('tabv'),sc=document.querySelector('.scroll'),fl=document.querySelector('.float');
+const back='<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+let name='ROSELINE';try{name=localStorage.getItem('opayName')||name}catch(e){}
+const F=(l,p,n='',t='text')=>`<div class="fld"><label>${l}</label><input name="${n}" type="${t}" placeholder="${p}"></div>`;
+const SEL=(l,o)=>`<div class="fld"><label>${l}</label><select>${o.map(x=>`<option>${x}</option>`).join('')}</select></div>`;
+const C=(a,pre='')=>`<div class="chips">${a.map((x,i)=>`<button class="chip${i?'':' on'}"${pre?` data-v="${x.replace(/\D/g,'')}"`:''}>${x}</button>`).join('')}</div>`;
+const L=a=>`<div class="card">${a.map(([i,t,s,k])=>`<button class="row" ${k?`data-go="${k}"`:`data-t="${t}"`}><span class="em">${i}</span><span><b>${t}</b>${s?`<small>${s}</small>`:''}</span><span class="ch">›</span></button>`).join('')}</div>`;
+const B=(t,m)=>`<button class="btn" data-t="${m||'Demo only: nothing was sent'}">${t}</button>`;
+let ci=0,ciDone=false,bal=0,txs=[],hide=false,pend=null,lastTx=null,pin='',hf='all',lastCi='';
+const DB='opayDB1';
+try{const d=JSON.parse(localStorage.getItem(DB)||'null');if(d){bal=+d.bal||0;txs=Array.isArray(d.txs)?d.txs:[];ci=+d.ci||0;lastCi=d.lastCi||'';ciDone=lastCi===new Date().toDateString();hide=!!d.hide}}catch(e){}
+function saveDB(){try{localStorage.setItem(DB,JSON.stringify({bal,txs,ci,lastCi,hide}))}catch(e){}}
+const fmt=n=>'₦'+n.toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
+const now=()=>new Date().toLocaleString('en-NG',{dateStyle:'medium',timeStyle:'short'}),ref=()=>'OP'+Date.now().toString().slice(-12);
+const NAMES=['ADEBAYO OLUWASEUN','CHIOMA OKAFOR','IBRAHIM MUSA','FUNMI ADEYEMI','EMEKA NWOSU','AISHA BELLO','TUNDE BAKARE','NGOZI EZE','SAMUEL OJO','BLESSING UDO'];
+const KV=a=>a.map(([x,y])=>`<div class="row"><span style="color:var(--mute);flex:none">${x}</span><b style="text-align:right;flex:1">${y}</b></div>`).join('');
+function renderBal(){saveDB();document.getElementById('balTxt').innerHTML=hide?'****':'<small>₦</small>'+bal.toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function startTx(kind){const q=s=>pg.querySelector(s);const acc=(q('[name=acc]').value||'').replace(/\D/g,''),amt=parseFloat(q('[name=amt]').value);
+if(kind==='bank'&&acc.length!==10)return show('Enter a 10-digit account number');
+if(kind==='opay'&&acc.length<10)return show('Enter a valid phone number');
+if(!(amt>0))return show('Enter an amount');
+if(amt>bal)return show('Insufficient balance. Add money first.');
+const sel=q('select');pend={kind,acc,amt,rem:q('[name=rem]').value,bank:kind==='bank'?sel.value:'OPay',name:NAMES[+acc.slice(-1)]};open('confirm')}
+function doAdd(){const v=parseFloat(pg.querySelector('[name=amt]').value);if(!(v>0))return show('Enter an amount');bal+=v;lastTx={t:'Wallet top-up',a:v,in:true,d:now(),ref:ref(),to:'OPay wallet',bank:'OPay',rem:''};txs.unshift(lastTx);renderBal();stack[stack.length-1]='receipt';render()}
+function pressKey(k){if(k==='del')pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;render();if(pin.length===4)setTimeout(()=>{const p=pend;bal-=p.amt;lastTx={t:'Transfer to '+p.name,a:p.amt,in:false,d:now(),ref:ref(),to:p.name+' ('+p.acc+')',bank:p.bank,rem:p.rem};txs.unshift(lastTx);renderBal();pin='';stack.length=0;stack.push('receipt');render()},250)}
+const S={
+addmoney:['Add Money',()=>`<div class="hero"><small>Current balance</small><b>${fmt(bal)}</b></div>`+C(['Bank Transfer','Card','USSD'])+F('Amount (₦)','0.00','amt','number')+C(['₦1000','₦5000','₦10000','₦50000'],1)+`<button class="btn" data-add>Add money</button><p class="note">Demo: the amount is added to your wallet instantly.</p>`],
+tobank:['To Bank Account',()=>`<p class="note" style="margin:0">Balance: ${fmt(bal)}</p>`+F('Account number','Enter 10 digits','acc')+SEL('Bank',['Access Bank','GTBank','First Bank','UBA','Zenith Bank','Opay','Kuda','Moniepoint'])+F('Amount (₦)','0.00','amt','number')+F('Remark','Optional','rem')+`<button class="btn" data-tb="bank">Next</button>`],
+toopay:['To OPay Account',()=>`<p class="note" style="margin:0">Balance: ${fmt(bal)}</p>`+F('Phone number','Enter number','acc')+F('Amount (₦)','0.00','amt','number')+F('Remark','Optional','rem')+`<button class="btn" data-tb="opay">Next</button>`],
+confirm:['Confirm Transfer',()=>`<div class="hero" style="text-align:center"><small>Amount</small><b>${fmt(pend.amt)}</b></div><div style="height:12px"></div><div class="card">${KV([['To',pend.name],['Account',pend.acc],['Bank',pend.bank],['Fee','₦0.00']])}</div><button class="btn" data-conf>Confirm</button>`],
+pin:['Enter Payment PIN',()=>`<p style="text-align:center;margin-top:10px">Pay ${fmt(pend.amt)} to ${pend.name}</p><div style="display:flex;justify-content:center;gap:14px;margin:22px 0">${[0,1,2,3].map(i=>`<i style="width:16px;height:16px;border-radius:50%;border:2px solid var(--green);background:${i<pin.length?'var(--green)':'transparent'}"></i>`).join('')}</div><div class="mg" style="gap:10px;grid-template-columns:repeat(3,1fr)">${[1,2,3,4,5,6,7,8,9,'',0,'del'].map(k=>k===''?'<span></span>':`<button class="chip" style="padding:16px;font-size:20px;border-radius:12px" data-k="${k}">${k==='del'?'⌫':k}</button>`).join('')}</div><p class="note" style="text-align:center">Demo: enter any 4 digits</p>`],
+receipt:['Receipt',()=>{const t=lastTx;return `<div style="text-align:center;padding:10px 0"><div style="width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;font-size:32px;display:grid;place-items:center;margin:0 auto 12px">✓</div><b style="font-size:17px">${t.in?'Money added':'Transfer successful'}</b><div style="font-size:28px;font-weight:700;margin-top:6px">${fmt(t.a)}</div></div><div class="card">${KV([['Type',t.t],['To',t.to],['Bank',t.bank],['Remark',t.rem||'None'],['Date',t.d],['Reference',t.ref]])}</div><button class="btn" data-done>Done</button><button class="btn" style="background:var(--tint);color:var(--green-d)" data-t="Receipt shared (demo)">Share receipt</button>`}],
+history:['Transaction History',()=>{const f=txs.filter(t=>hf==='all'||(hf==='in')===t.in);return `<div class="chips">${[['all','All'],['in','Money in'],['out','Money out']].map(([k,l])=>`<button class="chip${hf===k?' on':''}" data-f="${k}">${l}</button>`).join('')}</div>`+(f.length?`<div class="card" style="margin-top:12px">${f.map(t=>`<button class="row" data-tx="${txs.indexOf(t)}"><span class="em">${t.in?'⬇️':'⬆️'}</span><span><b>${t.t}</b><small>${t.d}</small></span><b style="color:${t.in?'var(--green-d)':'var(--ink)'}">${t.in?'+':'-'}${fmt(t.a)}</b></button>`).join('')}</div>`:'<div class="empty">🧾<br>No transactions yet</div>')}],
+addmoney0:['Add Money',()=>`<div class="card pad"><small style="color:var(--mute)">Your OPay account number</small><div style="font-size:24px;font-weight:700;letter-spacing:2px;margin-top:6px">8123456789</div><button class="chip" style="margin-top:10px" data-t="Account number copied">Copy</button></div><div style="height:12px"></div>`+L([['🏦','Bank Transfer','Send from any bank app'],['💳','Top up with Card','Debit card, instant'],['📟','USSD','Dial *955# on your phone'],['🏪','Cash deposit','Visit an OPay agent']])],
+tobank0:['To Bank Account',()=>F('Account number','Enter 10 digits')+SEL('Bank',['Access Bank','GTBank','First Bank','UBA','Zenith Bank','Opay','Kuda','Moniepoint'])+F('Amount (₦)','0.00','amt','number')+F('Remark','Optional')+B('Next')],
+toopay0:['To OPay Account',()=>F('Phone number or account','Enter number')+F('Amount (₦)','0.00','amt','number')+F('Remark','Optional')+B('Next')],
+withdraw:['Withdraw',()=>L([['🏦','To bank account','Free, instant','tobank'],['🧑‍💼','OPay agent','Cash out with a code'],['🏧','ATM','Use your OPay card'],['🛒','POS','Cash back at shops']])+'<p class="note">Available balance: ₦0.00</p>'],
+airtime:['Airtime',()=>C(['MTN','Airtel','Glo','9mobile'])+F('Phone number','08012345678')+C(['₦100','₦200','₦500','₦1000','₦2000'],1)+F('Amount (₦)','0.00','amt','number')+'<p class="note">Up to 6% cashback on airtime.</p>'+B('Pay')],
+data:['Data',()=>C(['MTN','Airtel','Glo','9mobile'])+F('Phone number','08012345678')+C(['1GB · 1 day · ₦350','2GB · 7 days · ₦900','5GB · 30 days · ₦1,500','10GB · 30 days · ₦3,000'])+B('Pay')],
+betting:['Betting',()=>C(['Bet9ja','SportyBet','1xBet','BetKing'])+F('User ID','Enter betting ID')+C(['₦500','₦1000','₦2000'],1)+F('Amount (₦)','0.00','amt','number')+B('Fund wallet')],
+tv:['TV',()=>C(['DStv','GOtv','StarTimes','Showmax'])+F('Smartcard / IUC number','Enter number')+SEL('Package',['Compact · ₦15,700','Padi · ₦4,400','Yanga · ₦6,000'])+B('Pay')],
+elec:['Electricity',()=>C(['Prepaid','Postpaid'])+SEL('Provider',['IKEDC','EKEDC','AEDC','PHED','IBEDC'])+F('Meter number','Enter meter number')+F('Amount (₦)','0.00','amt','number')+B('Pay')],
+owealth:['OWealth',()=>`<div class="hero"><small>Earn up to</small><b>15% p.a.</b></div><div style="height:12px"></div>`+L([['💰','Flexible','Withdraw anytime · 10% p.a.'],['🔒','Fixed 30 days','12% p.a.'],['🔒','Fixed 90 days','15% p.a.']])+B('Deposit')],
+loan:['Loan',()=>`<div class="hero"><small>You can borrow up to</small><b>₦500,000</b></div><div style="height:12px"></div>`+L([['⚡','Quick Cash','Up to ₦100,000 · 15 days'],['📈','OCredit','Up to ₦500,000 · 6 months'],['🧾','Repayment','No active loan']])+B('Apply now')],
+checkin:['Daily Check-In',()=>`<div class="hero"><small>Check-in streak</small><b>${ci} day${ci==1?'':'s'}</b></div><div class="days">${[1,2,3,4,5,6,7].map(d=>`<div class="day${d<=ci?' ok':''}">${d<=ci?'✓':'D'+d}</div>`).join('')}</div><button class="btn" data-ci>Check in today</button>`],
+more:['All Services',()=>`<div class="card pad"><div class="mg">${[['📱','Airtime','airtime'],['📶','Data','data'],['⚽','Betting','betting'],['📺','TV','tv'],['💡','Electricity','elec'],['💰','OWealth','owealth'],['💸','Loan','loan'],['📅','Check-In','checkin'],['✈️','Flights'],['🏨','Hotels'],['🎬','Movies'],['🛡️','Insurance']].map(([i,t,k])=>`<button ${k?`data-go="${k}"`:`data-t="${t} coming soon"`}><span class="em">${i}</span>${t}</button>`).join('')}</div></div>`],
+history0:['Transaction History',()=>C(['All','Money in','Money out'])+'<div class="empty">🧾<br>No transactions yet</div>'],
+notif:['Notifications',()=>L([['🎁','Welcome bonus','Claim your ₦100 airtime & ₦100 data voucher'],['✉️','Add your email','Stay informed about new OPay offers']])],
+support:['Help & Support',()=>L([['💬','Chat with us','Average reply: 2 min'],['📞','Call 01-700-0000'],['❓','Why is my transfer pending?'],['🔐','Reset transaction PIN']])],
+scan:['Scan',()=>`<div class="scan"><i></i>Point the camera at a QR code</div><div class="two"><button class="btn g" data-t="My QR code">My QR code</button><button class="btn g" data-t="Gallery">Gallery</button></div>`],
+};
+const BILL={airtime:{t:'Airtime',chips:['MTN','Airtel','Glo','9mobile'],f:['Phone number','08012345678'],type:'Airtime Top-up'},data:{t:'Data',chips:['MTN','Airtel','Glo','9mobile'],f:['Phone number','08012345678'],plans:[['1GB',350],['2GB',900],['5GB',1500],['10GB',3000]],type:'Mobile Data'},betting:{t:'Betting',chips:['Bet9ja','SportyBet','1xBet','BetKing'],f:['User ID','Enter betting ID'],type:'Betting'},tv:{t:'TV',chips:['DStv','GOtv','StarTimes','Showmax'],f:['Smartcard / IUC number','Enter number'],plans:[['Compact',15700],['Padi',4400],['Yanga',6000]],type:'TV Subscription'},elec:{t:'Electricity',chips:['IKEDC','EKEDC','AEDC','PHED','IBEDC'],f:['Meter number','Enter meter number'],type:'Electricity'}};
+const myNo='8123456789',mask=()=>myNo.slice(0,3)+'****'+myNo.slice(-3),pz=n=>String(n).padStart(2,'0'),dg=n=>Array.from({length:n},()=>Math.floor(Math.random()*10)).join('');
+const fd=d=>{const n=d.getDate(),o=(n%10==1&&n!=11)?'st':(n%10==2&&n!=12)?'nd':(n%10==3&&n!=13)?'rd':'th';return d.toLocaleString('en-US',{month:'short'})+' '+n+o+', '+d.getFullYear()+' '+pz(d.getHours())+':'+pz(d.getMinutes())+':'+pz(d.getSeconds())};
+function mk(p){const ts=new Date(),u=name.toUpperCase(),y=String(ts.getFullYear()).slice(2)+pz(ts.getMonth()+1)+pz(ts.getDate());return{t:p.title,type:p.type,a:p.amt,in:!!p.in,ts,d:fd(ts),no:y+dg(18),sess:'100004'+y+pz(ts.getHours())+pz(ts.getMinutes())+pz(ts.getSeconds())+dg(12),rname:p.rname,rsub:p.rsub,sname:p.sname||u,ssub:p.ssub||'OPay | '+mask()}}
+function startTx(kind){const q=s=>pg.querySelector(s);const acc=(q('[name=acc]').value||'').replace(/[^0-9]/g,''),amt=parseFloat(q('[name=amt]').value),rn=q('[name=rn]').value.trim().toUpperCase();
+if(kind==='bank'&&acc.length!==10)return show('Enter a 10-digit account number');
+if(kind==='opay'&&acc.length<10)return show('Enter a valid phone number');
+if(!rn)return show('Enter the recipient name');
+if(!(amt>0))return show('Enter an amount');
+if(amt>bal)return show('Insufficient balance. Add money first.');
+const bk=kind==='bank'?q('select').value:'OPay';pend={title:'Transfer to '+rn,type:kind==='bank'?'Transfer to Bank Account':'Transfer to OPay Account',amt,rname:rn,rsub:bk+' | '+acc,name:rn,acc,bank:bk};open('confirm')}
+function startBill(k){const b=BILL[k],q=s=>pg.querySelector(s),acc=(q('[name=acc]').value||'').trim(),net=q('.chips .chip.on').textContent;let amt,plan='';if(b.plans){const pc=q('#plans .chip.on');amt=+pc.dataset.p;plan=pc.dataset.n}else amt=parseFloat(q('[name=amt]').value);
+if(acc.length<5)return show('Enter a valid '+b.f[0].toLowerCase());
+if(!(amt>0))return show('Enter an amount');
+if(amt>bal)return show('Insufficient balance. Add money first.');
+pend={title:net+' '+b.type,type:b.type,amt,rname:acc,rsub:net+(plan?' | '+plan:''),name:net+' '+b.t,rows:[['Service',net+' '+b.t],[b.f[0],acc],['Fee','₦0.00']]};open('confirm')}
+function doAdd(){const v=parseFloat(pg.querySelector('[name=amt]').value);if(!(v>0))return show('Enter an amount');const m=pg.querySelector('.chips .chip.on').textContent;bal+=v;lastTx=mk({title:'Wallet top-up',type:'Add Money',amt:v,in:true,rname:name.toUpperCase(),rsub:'OPay | '+mask(),sname:m.toUpperCase(),ssub:'Wallet top-up'});txs.unshift(lastTx);renderBal();stack[stack.length-1]='receipt';render()}
+function pressKey(k){if(k==='del')pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;render();if(pin.length===4)setTimeout(()=>{bal-=pend.amt;lastTx=mk(pend);txs.unshift(lastTx);renderBal();pin='';stack.length=0;stack.push('receipt');render()},250)}
+const nameFields=(l)=>F(l,'Type the account name','rn');
+Object.assign(S,{
+tobank:['To Bank Account',()=>`<p class="note" style="margin:0">Balance: ${fmt(bal)}</p>`+F('Account number','Enter 10 digits','acc')+SEL('Bank',['Access Bank','GTBank','First Bank','United Bank For Africa','Zenith Bank','Fidelity Bank','Wema Bank','Opay','Kuda','Moniepoint'])+nameFields('Recipient name')+F('Amount (₦)','0.00','amt','number')+F('Remark','Optional','rem')+`<button class="btn" data-tb="bank">Next</button>`],
+toopay:['To OPay Account',()=>`<p class="note" style="margin:0">Balance: ${fmt(bal)}</p>`+F('Phone number','Enter number','acc')+nameFields('Recipient name')+F('Amount (₦)','0.00','amt','number')+F('Remark','Optional','rem')+`<button class="btn" data-tb="opay">Next</button>`],
+confirm:['Confirm',()=>`<div class="hero" style="text-align:center"><small>Amount</small><b>${fmt(pend.amt)}</b></div><div style="height:12px"></div><div class="card">${KV(pend.rows||[['To',pend.name],['Account',pend.acc],['Bank',pend.bank],['Fee','₦0.00']])}</div><button class="btn" data-conf>Confirm</button>`],
+receipt:['Sample Receipt',()=>{const t=lastTx,wm="url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='90'%3E%3Ctext x='10' y='55' transform='rotate(-20 85 45)' font-family='Arial' font-weight='700' font-size='20' fill='%23888' fill-opacity='.16'%3ESAMPLE%3C/text%3E%3C/svg%3E\")";
+return `<div style="background:var(--card);border-radius:16px;overflow:hidden;background-image:${wm}"><div style="background:linear-gradient(135deg,#0fa85f,#1dc573);color:#fff;padding:16px;text-align:center"><small style="opacity:.9">Sample receipt · Demo app</small><div style="font-size:28px;font-weight:700;margin-top:6px">${fmt(t.a)}</div><span style="display:inline-block;margin-top:8px;background:rgba(255,255,255,.22);border-radius:12px;padding:3px 12px;font-size:12px">Completed in demo</span></div><div style="padding:6px 0">${KV([['Item',t.type||t.t||''],['Name',t.rname||t.to||''],['Details',t.rsub||t.bank||''],['Date',t.d],['Ref',t.no||t.ref||'']])}</div><p class="note" style="text-align:center;padding:0 14px 14px;margin:0">Generated by the emulator for demonstration. Not a real transaction and not valid as proof of payment.</p></div><button class="btn" data-done>Done</button>`}]});
+Object.keys(BILL).forEach(k=>{const b=BILL[k];S[k]=[b.t,()=>`<p class="note" style="margin:0">Balance: ${fmt(bal)}</p>`+C(b.chips)+F(b.f[0],b.f[1],'acc')+(b.plans?`<div class="chips" id="plans">${b.plans.map(([n,p],i)=>`<button class="chip${i?'':' on'}" data-p="${p}" data-n="${n}">${n} · ${fmt(p)}</button>`).join('')}</div>`:C(['₦100','₦200','₦500','₦1000','₦2000'],1)+F('Amount (₦)','0.00','amt','number'))+`<button class="btn" data-bill="${k}">Pay</button>`]});
+const T={
+Rewards:()=>`<div class="hero"><small>Reward points</small><b>0</b></div><h4 style="margin:16px 0 0">Earn more</h4>`+L([['📅','Check in daily','+10 points','checkin'],['✉️','Add your email','+50 points'],['💳','Fund your wallet','+100 points','addmoney'],['👥','Invite a friend','+200 points']]),
+Finance:()=>L([['💰','OWealth','Earn up to 15% p.a.','owealth'],['💸','Loan','Borrow up to ₦500,000','loan'],['🛡️','Insurance','Protect what matters'],['🎯','Savings goals','Save toward something'],['📊','Credit score','Check for free']]),
+Cards:()=>`<div class="vcard"><b>OPay</b><div style="font-size:18px;letter-spacing:3px">•••• •••• •••• 0000</div><div>${name.toUpperCase()}</div></div>`+B('Create virtual card')+'<div style="height:14px"></div>'+L([['🔗','Link a bank card'],['⚙️','Card settings'],['🧊','Freeze card']]),
+Me:()=>`<div class="card pad" style="display:flex;gap:12px;align-items:center"><span class="em" style="width:48px;height:48px;font-size:22px">👤</span><div style="flex:1"><b>${name}</b><small style="display:block;color:var(--mute)">8123456789</small></div><button class="chip" data-name>Edit name</button></div><div style="height:12px"></div>`+L([['👤','Account information'],['🔐','Security & PIN'],['📈','Transaction limits'],['💳','Bank cards'],['❓','Help & support','','support'],['🚪','Log out'],['🗑️','Reset demo data','Clear saved balance and history']])
+};
+let tm='light';try{tm=localStorage.getItem('opayTheme')||'light'}catch(e){}
+function applyTheme(m){tm=m;const d=document.documentElement;if(m==='system')delete d.dataset.theme;else d.dataset.theme=m;try{localStorage.setItem('opayTheme',m)}catch(e){}}
+applyTheme(tm);
+const _Me=T.Me;T.Me=()=>'<button class="btn" data-install style="margin:0 0 12px">📲 Install app</button>'+_Me()+`<h4 style="margin:16px 0 8px">Appearance</h4><div class="card pad"><div class="chips" style="margin:0">${['light','dark','system'].map(m=>`<button class="chip${tm===m?' on':''}" data-mode="${m}">${m[0].toUpperCase()+m.slice(1)}</button>`).join('')}</div><p class="note">Choose light, dark, or match your device.</p></div>`;
+function render(){const k=stack[stack.length-1];if(!k){pg.classList.remove('on');return}
+ pg.innerHTML=`<div class="ph-h"><button data-back aria-label="Back">${back}</button>${S[k][0]}</div><div class="pb">${S[k][1]()}</div>`;pg.classList.add('on')}
+const stack=[];
+function open(k){if(S[k]){stack.push(k);render()}}
+let cur='Home';
+function tab(n){cur=n;stack.length=0;render();const h=n==='Home';sc.style.display=h?'':'none';fl.style.display=h?'':'none';tv.style.display=h?'none':'block';if(!h)tv.innerHTML=T[n]()}
+function setName(n){name=n||name;document.getElementById('nameTxt').textContent=name;try{localStorage.setItem('opayName',name)}catch(e){}if(cur!=='Home')tab(cur)}
+// name sheet
+const sh=document.createElement('div');sh.className='sheet-bg';sh.innerHTML='<div class="sheet"><h4>Change your name</h4><div class="fld"><input id="nIn" maxlength="20" placeholder="Your name"></div><div class="two"><button class="btn g" id="nC">Cancel</button><button class="btn" id="nS">Save</button></div></div>';ph.appendChild(sh);
+const nIn=sh.querySelector('#nIn');
+const openName=()=>{nIn.value=name;sh.classList.add('on');nIn.focus()};
+sh.querySelector('#nC').onclick=()=>sh.classList.remove('on');
+sh.querySelector('#nS').onclick=()=>{const v=nIn.value.trim();if(v){setName(v);show('Name updated')}sh.classList.remove('on')};
+sh.onclick=e=>{if(e.target===sh)sh.classList.remove('on')};
+document.getElementById('nameTxt').textContent=name;
+document.getElementById('nameBtn').onclick=openName;
+document.addEventListener('click',e=>{const t=e.target;let el;
+ if(t.closest('[data-name]'))openName();
+ else if(el=t.closest('[data-f]')){hf=el.dataset.f;render()}
+ else if(el=t.closest('[data-tx]')){lastTx=txs[el.dataset.tx];open('receipt')}
+ else if(el=t.closest('[data-tb]')){startTx(el.dataset.tb)}
+ else if(t.closest('[data-conf]')){pin='';open('pin')}
+ else if(el=t.closest('[data-k]')){pressKey(el.dataset.k)}
+ else if(t.closest('[data-add]')){doAdd()}
+ else if(el=t.closest('[data-bill]')){startBill(el.dataset.bill)}
+ else if(el=t.closest('[data-mode]')){applyTheme(el.dataset.mode);tv.innerHTML=T.Me();show('Appearance: '+el.dataset.mode)}
+ else if(t.closest('[data-done]')){stack.length=0;render()}
+ else if(t.closest('[data-ci]')){if(!ciDone){ci++;ciDone=true;lastCi=new Date().toDateString();saveDB();render();show('+10 points earned')}else show('Already checked in today')}
+ else if(el=t.closest('[data-go]'))open(el.dataset.go);
+ else if(t.closest('[data-back]')){stack.pop();render()}
+ else if(el=t.closest('.chip')){if(el.hasAttribute('data-name')||el.hasAttribute('data-t'))return;[...el.parentNode.children].forEach(c=>c.classList.remove('on'));el.classList.add('on');if(el.dataset.v){const i=pg.querySelector('[name=amt]');if(i)i.value=el.dataset.v}}
+ else if(el=t.closest('[data-t]')){if(el.dataset.t.startsWith('Switch')||el.textContent.includes('theme')){}show(el.dataset.t)}
+});
+// theme toggle in Me
+tv.addEventListener('click',e=>{const r=e.target.closest('.row');if(r&&r.textContent.includes('theme')){const d=document.documentElement,c=d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');d.dataset.theme=c==='dark'?'light':'dark'}});
+// rewire existing home controls
+document.getElementById('add').onclick=()=>open('addmoney');
+document.getElementById('eye').onclick=()=>{hide=!hide;renderBal();document.getElementById('eyeSvg').innerHTML=hide?eyeOff:eyeOpen};
+renderBal();
+document.getElementById('bell').onclick=()=>{document.getElementById('badge').style.display='none';open('notif')};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button').forEach(n=>n.classList.remove('on'));b.classList.add('on');tab(b.dataset.tab)});
+})();
+</script>
+<style>
+#login{position:absolute;inset:0;z-index:50;background:var(--card);display:none;flex-direction:column;padding:calc(22px + env(safe-area-inset-top,0px)) 22px 22px;overflow:auto}
+#login h2{font-size:24px;font-weight:700;margin-top:26px}
+#login .sub{color:var(--mute);font-size:14px;margin-top:8px;line-height:1.45}
+#login .lgo{display:flex;align-items:center;gap:6px;font-weight:800;font-size:24px}
+#login .bk{width:32px;height:32px;display:grid;place-items:center;margin-left:-6px}
+#login .bk svg{width:24px;height:24px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#login .box{display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--line);padding:12px 2px;margin-top:30px}
+#login .box:focus-within{border-color:var(--green)}
+#login .box input{flex:1;border:0;outline:0;background:none;color:var(--ink);font:inherit;font-size:17px;min-width:0}
+#login .cc{font-size:16px;font-weight:600;padding-right:10px;border-right:1px solid var(--line)}
+#login .go2{width:100%;background:var(--green);color:#fff;font-weight:700;font-size:16px;padding:15px;border-radius:28px;margin-top:30px}
+#login .go2[disabled]{opacity:.45;cursor:default}
+#login .lk{color:var(--green-d);font-size:14px;font-weight:600}
+#login .row2{display:flex;justify-content:space-between;margin-top:16px}
+#login .av{width:64px;height:64px;border-radius:50%;background:var(--tint);display:grid;place-items:center;font-size:28px;margin:26px auto 0}
+#login .ft{margin-top:auto;padding-top:24px;text-align:center;font-size:12px;color:var(--mute)}
+</style>
+<script>
+(()=>{
+const ph=document.querySelector('.phone'),lg=document.createElement('div');lg.id='login';ph.appendChild(lg);
+let step=1,phone='';
+const logo='<div class="lgo"><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="10" fill="none" stroke="#1dc573" stroke-width="5"/></svg><span>Pay</span></div>';
+const back='<button class="bk" id="lgBack" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>';
+function r(){
+ lg.style.display='flex';
+ if(step===1){
+  lg.innerHTML=logo+'<h2>Welcome</h2><p class="sub">Enter your phone number to log in or create an account.</p><div class="box"><span class="cc">🇳🇬 +234</span><input id="lgPh" type="tel" inputmode="numeric" placeholder="Phone number" autocomplete="off"></div><button class="go2" id="lgNext" disabled>Next</button><div class="row2"><button class="lk" data-lt="Create account (demo)">Create account</button><button class="lk" data-lt="Help center (demo)">Need help?</button></div><p class="ft">Demo app: any phone number works. Nothing is stored or sent anywhere.</p>';
+  const i=lg.querySelector('#lgPh'),b=lg.querySelector('#lgNext');i.value=phone;b.disabled=!phone;
+  i.oninput=()=>{phone=i.value.replace(/\D/g,'');b.disabled=!phone};
+  const go=()=>{if(phone){step=2;r()}};b.onclick=go;i.onkeydown=e=>{if(e.key==='Enter')go()};setTimeout(()=>i.focus(),50);
+ }else{
+  const m=phone.length>5?phone.slice(0,3)+'****'+phone.slice(-3):phone;
+  lg.innerHTML=back+'<div class="av">👤</div><h2 style="text-align:center;margin-top:14px">Welcome back</h2><p class="sub" style="text-align:center">+234 '+m+'</p><div class="box"><input id="lgPw" type="password" placeholder="Enter your password" autocomplete="off"><button id="lgEye" class="lk" type="button">Show</button></div><div class="row2"><button class="lk" id="lgOther">Use another number</button><button class="lk" data-lt="Reset password (demo)">Forgot password?</button></div><button class="go2" id="lgIn" disabled>Log in</button><p class="ft">Demo app: any password works.</p>';
+  const i=lg.querySelector('#lgPw'),b=lg.querySelector('#lgIn');
+  i.oninput=()=>{b.disabled=!i.value};
+  lg.querySelector('#lgEye').onclick=e=>{const s=i.type==='password';i.type=s?'text':'password';e.currentTarget.textContent=s?'Hide':'Show'};
+  lg.querySelector('#lgBack').onclick=lg.querySelector('#lgOther').onclick=()=>{step=1;r()};
+  const go=()=>{if(i.value){try{localStorage.setItem('opaySession','1')}catch(e){}lg.style.display='none';step=1;phone='';show('Welcome back')}};b.onclick=go;i.onkeydown=e=>{if(e.key==='Enter')go()};setTimeout(()=>i.focus(),50);
+ }
+}
+lg.addEventListener('click',e=>{const t=e.target.closest('[data-lt]');if(t)show(t.dataset.lt)});
+document.getElementById('tabv').addEventListener('click',e=>{const w=e.target.closest('.row');if(!w)return;if(w.textContent.includes('Log out')){try{localStorage.removeItem('opaySession')}catch(x){}step=1;phone='';r()}else if(w.textContent.includes('Reset demo data')){try{localStorage.removeItem('opayDB1');localStorage.removeItem('opayVou');localStorage.removeItem('opaySession')}catch(x){}location.reload()}});
+let sess=false;try{sess=localStorage.getItem('opaySession')==='1'}catch(e){}
+if(!sess)r();
+})();
+</script>
+<style>
+@media (max-width:479px){
+ :root{padding:0!important}
+ html,body{height:100%;width:100%;overflow:hidden;align-items:stretch}
+ body{display:block}
+ .phone{width:100vw;max-width:none;height:100vh;height:100dvh;max-height:none;border-radius:0;box-shadow:none;padding-top:env(safe-area-inset-top,0px)}
+ .ph-h{padding-top:calc(16px + env(safe-area-inset-top,0px))}
+ #login{padding-top:calc(22px + env(safe-area-inset-top,0px))}
+}
+</style>
+<style>.vou+.vou{margin-top:10px}.vou>div{min-width:0}.vou .go{flex:none;padding:8px 22px}.vou h6{font-size:14.5px}</style>
+<script>(()=>{let c=[];try{c=JSON.parse(localStorage.getItem('opayVou')||'[]')}catch(e){}
+const sv=()=>{try{localStorage.setItem('opayVou',JSON.stringify(c))}catch(e){}},mark=b=>{b.textContent='Claimed';b.disabled=true};
+const g0=document.getElementById('go');if(c.includes('v0'))mark(g0);g0.addEventListener('click',()=>{if(!c.includes('v0')){c.push('v0');sv()}});
+document.querySelectorAll('.go[data-vou]').forEach(b=>{const id=b.dataset.vou;if(c.includes(id))mark(b);b.onclick=()=>{mark(b);c.push(id);sv();show(b.dataset.msg)}})})();</script>
+<script>
+(()=>{
+const icon="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="#1dc573"/><circle cx="256" cy="256" r="120" fill="none" stroke="#fff" stroke-width="56"/></svg>');
+const add=(t,a)=>{const e=document.createElement(t);Object.assign(e,a);document.head.appendChild(e);return e};
+const meta=(n,c)=>{const m=add('meta',{});m.name=n;m.content=c};
+meta('theme-color','#1dc573');meta('mobile-web-app-capable','yes');meta('apple-mobile-web-app-capable','yes');meta('apple-mobile-web-app-title','OPay Demo');
+add('link',{rel:'apple-touch-icon',href:icon});
+if(!document.querySelector('link[rel=manifest]')){try{const m={name:'OPay Demo',short_name:'OPay Demo',display:'standalone',background_color:'#ffffff',theme_color:'#1dc573',start_url:location.href,scope:location.href,icons:[{src:icon,sizes:'any',type:'image/svg+xml',purpose:'any maskable'}]};add('link',{rel:'manifest',href:URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}))})}catch(e){}}
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+let dp=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+addEventListener('appinstalled',()=>{dp=null;show('App installed')});
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+const sh=document.createElement('div');sh.className='sheet-bg';sh.innerHTML='<div class="sheet"><h4>Install OPay Demo</h4><p class="note" id="insTxt" style="font-size:13.5px;line-height:1.5;color:var(--ink)"></p><div class="two"><button class="btn" id="insOk">Got it</button></div></div>';
+document.querySelector('.phone').appendChild(sh);
+sh.querySelector('#insOk').onclick=()=>sh.classList.remove('on');sh.onclick=e=>{if(e.target===sh)sh.classList.remove('on')};
+document.addEventListener('click',async e=>{
+ if(!e.target.closest('[data-install]'))return;
+ if(standalone())return show('App is already installed');
+ if(dp){dp.prompt();try{await dp.userChoice}catch(x){}dp=null;return}
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ sh.querySelector('#insTxt').innerHTML=ios?'On iPhone/iPad: tap the <b>Share</b> button in Safari, then choose <b>Add to Home Screen</b>.':'On Android/Chrome: open the browser menu (⋮) and tap <b>Install app</b> or <b>Add to Home screen</b>. If you do not see it, open this page directly in Chrome rather than inside another app.';
+ sh.classList.add('on')});
+})();
+</script>
+</body>
+</html>
